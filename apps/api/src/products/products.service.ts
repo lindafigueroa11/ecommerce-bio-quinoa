@@ -1,0 +1,2 @@
+import { Injectable, NotFoundException } from '@nestjs/common'; import { PrismaService } from '../prisma.service';
+@Injectable() export class ProductsService { constructor(private readonly prisma: PrismaService) {} findAll() { return this.prisma.product.findMany({ where: { active: true }, orderBy: { createdAt: 'desc' } }); } async findBySlug(slug: string) { const product = await this.prisma.product.findUnique({ where: { slug } }); if (!product || !product.active) throw new NotFoundException('Product not found'); return product; } }

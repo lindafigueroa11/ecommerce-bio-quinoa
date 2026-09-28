@@ -1,0 +1,2 @@
+import { Module } from '@nestjs/common'; import { ConfigModule } from '@nestjs/config'; import { ProductsModule } from './products/products.module'; import { CartModule } from './cart/cart.module'; import { OrdersModule } from './orders/orders.module'; import { PrismaService } from './prisma.service';
+@Module({ imports: [ConfigModule.forRoot({ isGlobal: true }), ProductsModule, CartModule, OrdersModule], providers: [PrismaService] }) export class AppModule {}

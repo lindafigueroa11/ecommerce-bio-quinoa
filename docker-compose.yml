@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: raiz
+      POSTGRES_PASSWORD: raiz
+      POSTGRES_DB: raiz
+    ports: ["5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+  api:
+    image: node:24-slim
+    working_dir: /workspace
+    command: sh -c "apt-get update -qq && apt-get install -y -qq openssl && npm install && npm run db:generate && npx prisma db push --accept-data-loss --schema apps/api/prisma/schema.prisma && npm run dev:api"
+    environment:
+      DATABASE_URL: postgresql://raiz:raiz@postgres:5432/raiz?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: local-development-access-secret
+      JWT_REFRESH_SECRET: local-development-refresh-secret
+      WEB_URL: http://localhost:3000
+      PORT: 4000
+    volumes:
+      - .:/workspace
+      - api-dependencies:/workspace/node_modules
+    ports: ["4000:4000"]
+    depends_on: [postgres, redis]
+  web:
+    image: node:24-slim
+    working_dir: /workspace
+    command: sh -c "npm install && npm run dev:web"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+      INTERNAL_API_URL: http://api:4000/api
+    volumes:
+      - .:/workspace
+      - web-dependencies:/workspace/node_modules
+    ports: ["3000:3000"]
+    depends_on: [api]
+volumes:
+  postgres-data:
+  api-dependencies:
+  web-dependencies:

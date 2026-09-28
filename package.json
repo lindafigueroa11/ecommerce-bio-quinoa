@@ -1,0 +1,13 @@
+{
+  "name": "ecommerce-bio-quinoa",
+  "private": true,
+  "packageManager": "npm@10.9.2",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@raiz/web",
+    "dev:api": "npm run start:dev --workspace=@raiz/api",
+    "build": "npm run build --workspaces",
+    "db:generate": "npm run prisma:generate --workspace=@raiz/api",
+    "db:migrate": "npm run prisma:migrate --workspace=@raiz/api"
+  }
+}
