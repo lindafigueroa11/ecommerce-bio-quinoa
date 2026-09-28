@@ -59,6 +59,10 @@ export class OrdersService {
     return { received: true };
   }
 
+  verifyStripeEvent(rawBody: Buffer | undefined, signature?: string) {
+    return this.stripe.constructWebhookEvent(rawBody, signature);
+  }
+
   private async confirmPaidSession(event: Stripe.Event, session: Stripe.Checkout.Session) {
     if (session.mode !== 'payment' || session.payment_status !== 'paid') return { received: true };
     const orderId = session.metadata?.orderId;
