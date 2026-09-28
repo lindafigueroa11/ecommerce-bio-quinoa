@@ -6,12 +6,13 @@ type CartProduct = { id: string; name: string; slug: string; imageUrl: string; p
 export type CartItem = { id: string; productId: string; quantity: number; subtotal: number; product: CartProduct };
 export type Cart = { id: string; sessionId: string; items: CartItem[]; total: number };
 export type OrderSummary = { id: string; status: string; total: number; createdAt: string; items: Array<{ id: string; productId: string; name: string; price: number; quantity: number; subtotal: number; imageUrl: string }> };
+export type CheckoutStart = { order: OrderSummary; checkoutUrl: string };
 type CartContextValue = {
   cart: Cart | null; ready: boolean; notice: string | null;
   add: (productId: string, name: string, quantity: number) => Promise<void>;
   update: (productId: string, quantity: number) => Promise<void>;
   remove: (productId: string) => Promise<void>; clear: () => Promise<void>;
-  createOrder: () => Promise<OrderSummary>; getOrder: (orderId: string) => Promise<OrderSummary>;
+  createOrder: () => Promise<CheckoutStart>; getOrder: (orderId: string) => Promise<OrderSummary>;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -41,7 +42,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const update = async (productId: string, quantity: number) => { if (!Number.isInteger(quantity) || quantity < 0) { setNotice('Selecciona una cantidad válida.'); return; } try { setCart(await withCart(current => request<Cart>(`/carts/${current.id}/items/${productId}`, current.sessionId, { method: 'PATCH', body: JSON.stringify({ quantity }) }))); } catch (error) { setNotice(error instanceof Error ? error.message : 'No pudimos actualizar la cesta.'); } };
   const remove = async (productId: string) => { try { setCart(await withCart(current => request<Cart>(`/carts/${current.id}/items/${productId}`, current.sessionId, { method: 'DELETE' }))); setNotice('Producto eliminado de la cesta.'); } catch (error) { setNotice(error instanceof Error ? error.message : 'No pudimos actualizar la cesta.'); } };
   const clear = async () => { try { setCart(await withCart(current => request<Cart>(`/carts/${current.id}/items`, current.sessionId, { method: 'DELETE' }))); setNotice('Cesta vaciada.'); } catch (error) { setNotice(error instanceof Error ? error.message : 'No pudimos vaciar la cesta.'); } };
-  const createOrder = async () => { const order = await withCart(current => request<OrderSummary>('/orders', current.sessionId, { method: 'POST', body: JSON.stringify({ cartId: current.id }) })); setCart(current => current ? { ...current, items: [], total: 0 } : current); setNotice('Pedido creado correctamente.'); return order; };
+  const createOrder = async () => withCart(current => request<CheckoutStart>('/orders', current.sessionId, { method: 'POST', body: JSON.stringify({ cartId: current.id }) }));
   const getOrder = async (orderId: string) => withCart(current => request<OrderSummary>(`/orders/${orderId}`, current.sessionId));
   return <CartContext.Provider value={{ cart, ready, notice, add, update, remove, clear, createOrder, getOrder }}>{children}{notice && <div role="status" className="fixed bottom-5 right-5 z-50 rounded-xl bg-raiz-950 px-5 py-3 text-sm font-bold text-white shadow-xl">{notice}<button onClick={() => setNotice(null)} className="ml-4 text-raiz-100" aria-label="Cerrar aviso">×</button></div>}</CartContext.Provider>;
 }
