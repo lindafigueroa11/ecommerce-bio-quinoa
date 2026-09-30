@@ -13,13 +13,16 @@ services:
   api:
     image: node:24-slim
     working_dir: /workspace
-    command: sh -c "apt-get update -qq && apt-get install -y -qq openssl && npm install && npm run db:generate && npx prisma db push --accept-data-loss --schema apps/api/prisma/schema.prisma && npm run dev:api"
+    command: sh -c "apt-get update -qq && apt-get install -y -qq openssl procps && npm install && npm run db:generate && npx prisma db push --accept-data-loss --schema apps/api/prisma/schema.prisma && npm run dev:api"
     environment:
       DATABASE_URL: postgresql://raiz:raiz@postgres:5432/raiz?schema=public
       REDIS_URL: redis://redis:6379
       JWT_ACCESS_SECRET: local-development-access-secret
       JWT_REFRESH_SECRET: local-development-refresh-secret
       WEB_URL: http://localhost:3000
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_WEBHOOK_TOLERANCE_SECONDS: ${STRIPE_WEBHOOK_TOLERANCE_SECONDS:-300}
       PORT: 4000
     volumes:
       - .:/workspace
