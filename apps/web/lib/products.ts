@@ -1,13 +1,13 @@
 export type Product = { id?: string; slug: string; name: string; description: string; price: number; image: string; category: string; rating: number; reviews: number; inventory?: number };
 export const fallbackProducts: Product[] = [
-  { slug:'white-quinoa', name:'White quinoa', description:'A light and versatile white quinoa, naturally rich in plant-based protein, fiber, and essential nutrients into one simple scoop.', price:6.9, image:'https://images.unsplash.com/photo-1586208958839-06c17cacdf08?auto=format&fit=crop&w=900&q=85', category:'Despensa', rating:4.9, reviews:221 },
-  { slug:'manzanas-gala', name:'Manzanas Gala', description:'Dulces, crujientes y recién cosechadas.', price:3.95, image:'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=900&q=85', category:'Fruta y verdura', rating:4.9, reviews:128 },
-  { slug:'miel-romero', name:'Miel de romero', description:'Miel cruda artesanal de floración de romero.', price:8.5, image:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=900&q=85', category:'Despensa', rating:4.8, reviews:97 }
+  { slug: 'white-quinoa', name: 'White Quinoa', description: 'A light and versatile white quinoa from the Peruvian Andes, naturally rich in plant-based protein, fibre, and essential nutrients.', price: 6.9, image: '/images/quinoa-white.png', category: 'Peruvian quinoa', rating: 4.9, reviews: 221 },
+  { slug: 'red-quinoa', name: 'Red Quinoa', description: 'A hearty red quinoa grown in Peru, with a nutty flavour and a firm texture for colourful European meals.', price: 7.9, image: '/images/quinoa-red.png', category: 'Peruvian quinoa', rating: 4.9, reviews: 184 },
+  { slug: 'black-quinoa', name: 'Black Quinoa', description: 'A bold, mineral-rich black quinoa from Peru, selected for European kitchens that value flavour and provenance.', price: 8.5, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85', category: 'Peruvian quinoa', rating: 4.8, reviews: 146 },
 ];
 const ratingBySlug: Record<string, Pick<Product, 'rating' | 'reviews'>> = {
   'white-quinoa': { rating: 4.9, reviews: 221 },
-  'manzanas-gala': { rating: 4.9, reviews: 128 },
-  'miel-romero': { rating: 4.8, reviews: 97 },
+  'red-quinoa': { rating: 4.9, reviews: 184 },
+  'black-quinoa': { rating: 4.8, reviews: 146 },
 };
 
 export async function getProducts(): Promise<Product[]> {

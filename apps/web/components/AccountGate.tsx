@@ -9,6 +9,6 @@ export function AccountGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   useEffect(() => { if (ready && !user) router.replace(`/login?next=${encodeURIComponent(pathname)}`); }, [pathname, ready, router, user]);
-  if (!ready || !user) return <main className="mx-auto max-w-5xl px-6 py-16">Cargando tu cuenta…</main>;
+  if (!ready || !user) return <main className="mx-auto max-w-5xl px-6 py-16">Loading your account…</main>;
   return <>{children}</>;
 }
